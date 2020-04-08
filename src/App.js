@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { fetchData } from './requests/fetchData';
+import { api } from './constants/constants';
+import { CartList } from './components/cart-list/Cart-list.component';
+import { Header } from './components/header/Header.component';
+import { SearchBox } from './components/search-box/Search-box.component';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [monsters, setMonsters] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+
+  useEffect(() => {
+    fetchData(api.user).then(response => setMonsters(response));
+  }, []);
+
+  const handleSearchInput = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const filterMonsters = monsters.filter((monster) => monster.name.toLowerCase().includes(searchInput.toLowerCase()));
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <SearchBox value={ searchInput } placeholder='Search Monsters' handleChange={ handleSearchInput } />
+      <CartList monsters={ filterMonsters } />
     </div>
   );
-}
+};
 
 export default App;
